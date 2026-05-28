@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Volunteer Portal | CrisisMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="icon" href="./Material/logo.png" type="image/x-icon" />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #0a0a0a;
+        color: #ffffff;
+      }
+      .card {
+        background-color: #1a1a1a;
+        border: 1px solid #333333;
+        transition: all 0.3s ease;
+      }
+      .card:hover {
+        border-color: white;
+        transform: translateY(-5px);
+      }
+      .training-badge {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      }
+      .active-mission {
+        background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+      }
+      select {
+        background: #1a1a1a;
+        border: 1px solid #333333;
+        color: white;
+        padding: 0.4rem;
+        border-radius: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen bg-[#0A0A0A]">
+    <!-- Header -->
+    <header class="px-4 py-6 border-b border-[#333333]">
+      <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <a href="index.html" class="text-2xl font-medium" data-i18n="title"
+          >CrisisMitra</a
+        >
+        <div class="flex items-center gap-4">
+          <a
+            href="{{url_for('main.crisismitra')}}"
+            id="dashboardLink"
+            class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm flex items-center gap-2"
+          >
+            <i data-feather="activity" class="w-4 h-4"></i>
+            <span data-i18n="dashboard">Dashboard</span>
+          </a>
+          <a
+            href="{{url_for('main.sos')}}"
+            class="border border-red-600 text-red-400 px-4 py-2 rounded-full text-sm hover:bg-red-600 hover:text-white transition flex items-center gap-2"
+          >
+            <i data-feather="alert-triangle" class="w-4 h-4"></i>
+            <span data-i18n="sos_alerts">SOS Alerts</span>
+          </a>
+          {% if session.get('is_admin') %}
+          <a
+            href="{{url_for('volunteer.logout')}}"
+            class="bg-gray-800 text-white px-4 py-2 rounded-full text-sm hover:bg-red-600 hover:text-white transition flex items-center gap-2"
+          >
+            <i data-feather="log-out" class="w-4 h-4"></i>
+            <span>Logout Admin</span>
+          </a>
+          {% endif %}
+          <select id="languageSelector">
+            <option value="en">EN</option>
+            <option value="hi">हिंदी</option>
+            <option value="mr">मराठी</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-0 py-8">
+      <div class="flex flex-col md:flex-row gap-8">
+        <!-- Volunteer Profile -->
+         
+        <div class="md:w-1/3">
+          {% set ns = namespace(last_loc=None, first=True) %}
+          {% for vol in vol_info %}
+          {% if vol.loc != ns.last_loc %}
+            {% if not ns.first %}
+              </div> <!-- Close previous group container -->
+            {% endif %}
+            
+            <!-- Group Header Accordion -->
+            <div 
+              class="active-mission card p-4 rounded-xl mb-3 border-l-4 border-blue-500 cursor-pointer flex justify-between items-center select-none hover:bg-[#1a1a1a]/80 hover:border-blue-400 transition-all duration-300 shadow-md"
+              onclick="toggleLocality('{{ vol.loc|replace(" ", "-") }}')"
+            >
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-600/10 flex items-center justify-center">
+                  <i data-feather="map-pin" class="w-4 h-4 text-blue-400"></i>
+                </div>
+                <h2 class="text-base font-semibold text-white tracking-wide">
+                  Volunteers in <span class="text-blue-400 font-semibold">{{vol.loc}}</span>
+                </h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="bg-[#222] text-[#aaa] text-xs font-semibold px-2.5 py-1 rounded-full border border-[#333] tracking-wider uppercase text-[10px]">
+                  Responders
+                </span>
+                <i data-feather="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" id="icon-{{ vol.loc|replace(" ", "-") }}"></i>
+              </div>
+            </div>
+            
+            <!-- Collapsible Volunteers Container (Hidden by Default) -->
+            <div id="group-{{ vol.loc|replace(" ", "-") }}" class="hidden space-y-4 mb-6 ml-2 pl-4 border-l border-[#222]">
+            
+            {% set ns.last_loc = vol.loc %}
+            {% set ns.first = False %}
+          {% endif %}
+
+          <div class="card p-6 rounded-xl border border-[#333]">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                class="w-16 h-16 rounded-full bg-[#333333] flex items-center justify-center overflow-hidden"
+              >
+                <img
+                  src="data:image/webp;base64,UklGRsIDAABXRUJQVlA4ILYDAADQGwCdASqpALQAPp1MoEslpKMhqnO4SLATiWlu3V8rKR+qdnXaI9gMoIIGyHVQQ03xvve/3M9m4c0m2py4vR0pkDsiktwCb8avQFrGThSExcWoqD0uvgpNifWpyOviEHqqsfpe16nXUdqMSf6z+KCoJSUxJV7whTt6h/FWKTi2bLH+d6UIbl8Pyka5asXjXAXqMNhyjebC6yb7UcOz/DYzsBn1kPyqERTJL1Cai/SbcQHoqzt/zoYD8Blk//NIlVCkURoJdljOjcKPPH11Umoh5GZQjhCoU/qB66ZA7NjUL0dKZA7IoMAA/veMAAAAFbjKaDA8fogIk6iN3/jRZEQ02x2CcDIuewpONPVLd5rzdBoigmsPVjQyU1QILX6B+eNHhqKOKl8n/bg35lOUOPrfIeADVyGEtTdiSDUvgjMuGSmUkj/VmF5rgqF5kqHCXDlbEET/Zk5f02qrsUOON3e8gkr6uLENFuowz8XNZEGfUUKC3cAeI3VuV6tu6NpsVPDIgO+AwKAdRGjs68cvmClMr35KJIM4a+KJD+ylCeFvtcsYc2dHl9ZqAW2DfQPKWicH29pETw4Z1N5gIOnCOmr3umr2/zc1W0JAlAHgzqSNsAEJja1QxXaD+7aoxI/7vvirJD90ZhENA1/1H0h/s/gQ6yDME0v1Sb0j4yO6DxgoH73Gqas04EhYONrlRSZRhsVCsBoD20t1TBVjXfU0CT8hprYLCFyHm9K+aqBBEyojzpORE/98Q/wkHOwnpLaj947xiuEJXgPbgr/et26tQjdnRiTsGLC6qR8ApwalZ8EUYmB4nMvDYcp8Js6x7OVEmiOLwm2eNP9mD81B+h27IbzxPu2BRmMH3dz8+sOT5/QtrrPnCgo4n+W87huiaUNOXQ2XK4ZyPEwsGWWWSFfTYd4+FNaa6AB7BV/q7tYeT+ualGQOJTLcXR7a7afP9KHIqP+wuM+nwhxOKQOGn1zTgOksV/vLXVZDUjsiDuTWOw0DvqofBwmcg5Gu99m5AdxXDFyjmtXAUvd/K+3tBkY5RpGUZ1fx7VQGCMXfYvH358S/pdX0E0OwpA50zqdTUGX0LsgH6o7o9dKoA+VcdVCTZtf8heZAF4B14KUlNK29xDCdNdBMLf7KKz+uJg7Z4KIui5QAKLoGRqv4j2cnWuEdT26HQ4Ii15F62HExuXCBe1n0KijuLok8gNb7w4mi8x0sX/KkIlk8qw9pzCubTL13whEy1nZC5ySs7YzUPZWsEliUIAAAAAAAAAA="
+                  class="w-full h-full object-cover animate-fade-in"
+                  alt="Volunteer Avatar"
+                />
+              </div>
+              <div>
+                <h2 class="text-xl font-medium" >
+                  {{vol.fname}} {{vol.lname}}
+                </h2>
+                <p class="text-[#D3D3D3] text-sm" >
+                  Joined on {{vol.date}}
+                </p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              
+              <div>
+                <p class="text-sm text-[#D3D3D3]" data-i18n="certifications">
+                  Skills
+                </p>
+                
+                <div class="flex flex-wrap gap-2 mt-2">
+                  {% for skill in vol.skills %}
+                  <span
+                    class="bg-green-600/20 text-green-4
+                    00 px-3 py-1 rounded-full text-xs"
+                    
+                    >{{skill.skill_name}}</span
+                  >
+                  {% endfor %}
+                  
+                </div>
+                
+                
+              </div>
+              {% if session.get('is_admin') %}
+              <div>
+                <a href="{{url_for('volunteer.certify', volid=vol.id)}}" class="text-sm text-[#D3D3D3] bg-blue-600 rounded-lg p-2"  >Edit Skill</a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+          {% if not ns.first %}
+            </div> <!-- Close final group container -->
+          {% endif %}
+
+          <!-- Training -->
+          
+        </div>
+        
+        <!-- Main Content (Active Missions Column) -->
+        <div class="md:w-2/3">
+          {% for sos in sos_info %}
+          <!-- Active Mission -->
+          <div
+            class="active-mission card p-6 rounded-xl mb-6 border-l-4 border-blue-500"
+          >
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-medium flex items-center gap-2">
+                <i data-feather="target" class="w-5 h-5 text-blue-400"></i>
+                <span data-i18n="active_mission">Active Mission</span>
+              </h2>
+              <span
+                class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs"
+                data-i18n="in_progress"
+                >In Progress</span
+              >
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <p class="text-sm text-[#D3D3D3]" data-i18n="location">
+                  Location
+                </p>
+                <p class="font-medium">{{area}}</p>
+              </div>
+              <div>
+                <p class="text-sm text-[#D3D3D3]" data-i18n="team">Team</p>
+                <p class="font-medium">Medical Response Unit #4</p>
+              </div>
+              <div>
+                <p class="text-sm text-[#D3D3D3]" >
+                  Started {{sos.date}}
+                </p>
+                <p class="font-medium">{{sos}}</p>
+              </div>
+              <div>
+                <p class="text-sm text-[#D3D3D3]" data-i18n="priority">
+                  Priority
+                </p>
+                <p class="font-medium text-red-400" data-i18n="high">High</p>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <p class="text-sm text-[#D3D3D3]" data-i18n="mission_details">
+                Mission Details
+              </p>
+              <p class="font-medium" >
+                {{sos.emergency}} {{sos.add_detail}}
+              </p>
+            </div>
+
+            {% if session.get('is_admin') %}
+            <div class="mt-4 flex justify-end border-t border-[#333] pt-4">
+              <a
+                href="{{url_for('volunteer.dismiss_sos', sos_id=sos.id)}}"
+                class="text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg px-4 py-2 flex items-center gap-2 transition"
+                onclick="return confirm('Are you sure you want to dismiss and delete this SOS alert?');"
+              >
+                <i data-feather="trash-2" class="w-4 h-4"></i>
+                <span>Dismiss SOS Alert</span>
+              </a>
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </main>
+
+    <script>
+      feather.replace();
+
+      const translations = {
+        en: {
+          title: "CrisisMitra",
+          dashboard: "Dashboard",
+          sos_alerts: "SOS Alerts",
+          volunteer_name: "Volunteer Name",
+          joined: "Joined 3 months ago",
+          skills: "Skills",
+          certifications: "Certifications",
+          skill_firstaid: "First Aid",
+          skill_rescue: "Search & Rescue",
+          skill_translation: "Translation",
+          cert_cpr: "CPR Certified",
+          cert_emt: "EMT-B",
+          training: "Training",
+          train_basic: "Basic First Aid",
+          completed_2w: "Completed 2 weeks ago",
+          train_communication: "Crisis Communication",
+          completed_1m: "Completed 1 month ago",
+          active_mission: "Active Mission",
+          in_progress: "In Progress",
+          location: "Location",
+          team: "Team",
+          started: "Started",
+          priority: "Priority",
+          high: "High",
+          mission_details: "Mission Details",
+          mission_text:
+            "Provide first aid and evacuation for earthquake victims in downtown area. Multiple casualties reported.",
+        },
+        hi: {
+          title: "क्राइसिस बीकन",
+          dashboard: "डैशबोर्ड",
+          sos_alerts: "एसओएस अलर्ट",
+          volunteer_name: "स्वयंसेवक का नाम",
+          joined: "3 महीने पहले जुड़ा",
+          skills: "कौशल",
+          certifications: "प्रमाण पत्र",
+          skill_firstaid: "प्राथमिक चिकित्सा",
+          skill_rescue: "खोज और बचाव",
+          skill_translation: "अनुवाद",
+          cert_cpr: "सीपीआर प्रमाणित",
+          cert_emt: "ईएमटी-बी",
+          training: "प्रशिक्षण",
+          train_basic: "मूल प्राथमिक चिकित्सा",
+          completed_2w: "2 सप्ताह पहले पूरा हुआ",
+          train_communication: "संकट संचार",
+          completed_1m: "1 माह पहले पूरा हुआ",
+          active_mission: "सक्रिय मिशन",
+          in_progress: "प्रगति पर",
+          location: "स्थान",
+          team: "दल",
+          started: "प्रारंभ",
+          priority: "प्राथमिकता",
+          high: "उच्च",
+          mission_details: "मिशन विवरण",
+          mission_text:
+            "डाउनटाउन क्षेत्र में भूकंप पीड़ितों को प्राथमिक चिकित्सा और निकासी प्रदान करें। कई हताहतों की सूचना है।",
+        },
+        mr: {
+          title: "क्रायसिस बीकन",
+          dashboard: "डॅशबोर्ड",
+          sos_alerts: "एसओएस सूचना",
+          volunteer_name: "स्वयंसेवकाचे नाव",
+          joined: "३ महिने आधी सामील",
+          skills: "कौशल्ये",
+          certifications: "प्रमाणपत्रे",
+          skill_firstaid: "प्राथमिक उपचार",
+          skill_rescue: "शोध आणि बचाव",
+          skill_translation: "भाषांतर",
+          cert_cpr: "सीपीआर प्रमाणित",
+          cert_emt: "ईएमटी-बी",
+          training: "प्रशिक्षण",
+          train_basic: "मूल प्राथमिक उपचार",
+          completed_2w: "२ आठवड्यांपूर्वी पूर्ण",
+          train_communication: "संकट संवाद",
+          completed_1m: "१ महिना आधी पूर्ण",
+          active_mission: "सक्रिय मोहिम",
+          in_progress: "प्रगतीमध्ये",
+          location: "स्थान",
+          team: "पथक",
+          started: "सुरू झाले",
+          priority: "प्राधान्य",
+          high: "उच्च",
+          mission_details: "मोहिमेचे तपशील",
+          mission_text:
+            "डाउनटाउन भागातील भूकंपग्रस्तांना प्राथमिक उपचार आणि स्थलांतराची मदत करा. अनेक जखमींची नोंद आहे.",
+        },
+      };
+
+      const elements = document.querySelectorAll("[data-i18n]");
+      const selector = document.getElementById("languageSelector");
+
+      function setLanguage(lang) {
+        elements.forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (translations[lang][key]) el.textContent = translations[lang][key];
+        });
+      }
+
+      selector.addEventListener("change", (e) => {
+        setLanguage(e.target.value);
+      });
+
+      function toggleLocality(locId) {
+        const container = document.getElementById('group-' + locId);
+        const icon = document.getElementById('icon-' + locId);
+        
+        if (container.classList.contains('hidden')) {
+          container.classList.remove('hidden');
+          if (icon) icon.style.transform = 'rotate(180deg)';
+        } else {
+          container.classList.add('hidden');
+          if (icon) icon.style.transform = 'rotate(0deg)';
+        }
+      }
+
+      setLanguage("en");
+      
+      document.getElementById("dashboardLink").addEventListener("click", async function (e) {
+        e.preventDefault()
+
+        const res = await fetch("/volunteer", {
+          method: "POST",
+          body: new FormData(e.target)
+        })
+
+        if (res.ok) {
+        window.location.href = "/sos"
+      } else {
+        alert("Invalid credentials")
+      }
+
+          })
+  
+
+    </script>
+  </body>
+</html>
