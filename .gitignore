@@ -1,0 +1,28 @@
+.env
+__pycache__/
+*.pyc
+*.db
+instance/
+venv/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.env
+venv/
+env/
+
+# Database
+*.db
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
