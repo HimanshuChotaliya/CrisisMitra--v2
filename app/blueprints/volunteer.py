@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify, session, abort
+from flask import Blueprint, request, render_template, redirect, url_for, jsonify, session, abort, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models import Volunteer, Sos, Skill, User
@@ -15,7 +15,9 @@ def volunteer_login():
         remember = request.form.get('remember')
         
         # Intercept admin login credentials
-        if email == "admin@gmail.com" and password == "@dmin":
+        admin_email = current_app.config.get('ADMIN_EMAIL')
+        admin_password = current_app.config.get('ADMIN_PASSWORD')
+        if email == admin_email and password == admin_password:
             session['is_admin'] = True
             return redirect(url_for('volunteer.volunteer'))
             
