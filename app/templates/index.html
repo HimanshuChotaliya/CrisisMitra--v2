@@ -283,8 +283,7 @@
       }
     </style>
 
-    <!-- Chatbot Embed -->
-    <script src="https://www.noupe.com/embed/0199cc5a78967a5e8e7d90d4bec06d4f5e41.js"></script>
+
 
     <script>
       // Vanta background
@@ -387,73 +386,6 @@
         .getElementById("lang-mr")
         .addEventListener("click", () => setLanguage("mr"));
     </script>
-    <!-- Noupe AI Chatbot Embed -->
-    <script src="https://www.noupe.com/embed/0199cc5a78967a5e8e7d90d4bec06d4f5e41.js"></script>
 
-    <style>
-      /* ---- Footer fix ---- */
-      footer {
-        position: relative;
-        z-index: 1;
-        padding-bottom: 100px; /* space for chat bubble */
-      }
-
-      /* ---- Chatbot container styling ---- */
-      #JotformAgent-0199cc5a78967a5e8e7d90d4bec06d4f5e41 {
-        position: fixed !important;
-        bottom: 30px !important;
-        right: 30px !important;
-        z-index: 9999 !important; /* stays above everything */
-        animation: fadeInUp 1.2s ease-out, floaty 3s ease-in-out infinite;
-        transition: all 0.3s ease-in-out;
-      }
-
-      /* ---- Adjust chat area popup when open ---- */
-      [id^="jfPopupContainer"] {
-        bottom: 100px !important; /* lifts chatbot window slightly above footer */
-        right: 20px !important;
-        z-index: 99999 !important;
-      }
-
-      /* ---- Entrance Animation ---- */
-      @keyframes fadeInUp {
-        0% {
-          opacity: 0;
-          transform: translateY(40px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* ---- Floating/Breathing effect ---- */
-      @keyframes floaty {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-6px);
-        }
-      }
-
-      /* ---- Hover glow ---- */
-      #JotformAgent-0199cc5a78967a5e8e7d90d4bec06d4f5e41:hover {
-        box-shadow: 0 0 25px rgba(0, 150, 255, 0.6);
-      }
-
-      /* ---- Responsive (mobile safe) ---- */
-      @media (max-width: 640px) {
-        #JotformAgent-0199cc5a78967a5e8e7d90d4bec06d4f5e41 {
-          bottom: 20px !important;
-          right: 20px !important;
-        }
-        [id^="jfPopupContainer"] {
-          bottom: 80px !important;
-          right: 10px !important;
-        }
-      }
-    </style>
   </body>
 </html>
