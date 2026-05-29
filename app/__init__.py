@@ -10,7 +10,9 @@ def create_app():
     jwt.init_app(app)
 
     with app.app_context():
+        from app.models import User, Sos, Volunteer, Skill
         db.create_all()
+
 
 
     # Register blueprints
