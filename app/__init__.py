@@ -9,6 +9,10 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
 
+    with app.app_context():
+        db.create_all()
+
+
     # Register blueprints
     from app.blueprints.auth import auth_bp
     from app.blueprints.main import main_bp
