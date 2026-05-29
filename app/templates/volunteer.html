@@ -96,7 +96,7 @@
             <!-- Group Header Accordion -->
             <div 
               class="active-mission card p-4 rounded-xl mb-3 border-l-4 border-blue-500 cursor-pointer flex justify-between items-center select-none hover:bg-[#1a1a1a]/80 hover:border-blue-400 transition-all duration-300 shadow-md"
-              onclick="toggleLocality('{{ vol.loc|replace(" ", "-") }}')"
+              onclick="toggleLocality('{{ vol.loc|replace(' ', '-') }}')"
             >
               <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-blue-600/10 flex items-center justify-center">
@@ -110,12 +110,12 @@
                 <span class="bg-[#222] text-[#aaa] text-xs font-semibold px-2.5 py-1 rounded-full border border-[#333] tracking-wider uppercase text-[10px]">
                   Responders
                 </span>
-                <i data-feather="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" id="icon-{{ vol.loc|replace(" ", "-") }}"></i>
+                <i data-feather="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" id="icon-{{ vol.loc|replace(' ', '-') }}"></i>
               </div>
             </div>
             
             <!-- Collapsible Volunteers Container (Hidden by Default) -->
-            <div id="group-{{ vol.loc|replace(" ", "-") }}" class="hidden space-y-4 mb-6 ml-2 pl-4 border-l border-[#222]">
+            <div id="group-{{ vol.loc|replace(' ', '-') }}" class="hidden space-y-4 mb-6 ml-2 pl-4 border-l border-[#222]">
             
             {% set ns.last_loc = vol.loc %}
             {% set ns.first = False %}
